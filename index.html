@@ -563,4 +563,342 @@ const questions = [
     q: "Which of the following is NOT necessarily true in an arbitrary normed space?",
     options: [
       "Every Cauchy sequence converges",
-      
+      "The norm satisfies triangle inequality",
+      "Scalar multiplication scales norm",
+      "Only zero has zero norm"
+    ],
+    a: 0
+  },
+  {
+    q: "Products of Banach spaces (with product norm) are:",
+    options: [
+      "Never Banach",
+      "Banach spaces under standard norms",
+      "Finite only",
+      "Not normable"
+    ],
+    a: 1
+  },
+  {
+    q: "The operator norm of a bounded linear functional f is:",
+    options: [
+      "inf { C : |f(x)| ≤ C ∥x∥ for all x }",
+      "sup { |f(x)| : ∥x∥ = 1 }",
+      "Both (a) and (b) (they coincide)",
+      "None of the above"
+    ],
+    a: 2
+  },
+  {
+    q: "Which of these is an example of a Banach space?",
+    options: [
+      "Polynomials with coefficientwise topology",
+      "ℓ_2 with the usual 2-norm",
+      "Space of rational functions without sup norm",
+      "Space of all sequences without any norm"
+    ],
+    a: 1
+  },
+  {
+    q: "If T: X → Y is a linear operator between Banach spaces and its graph is closed, then:",
+    options: [
+      "T is not defined",
+      "T is bounded (continuous)",
+      "T is compact",
+      "T is surjective"
+    ],
+    a: 1
+  },
+  {
+    q: "Which theorem is most directly used to show pointwise bounded linear maps are uniformly bounded?",
+    options: [
+      "Open Mapping Theorem",
+      "Banach–Steinhaus (Uniform Boundedness)",
+      "Hahn–Banach",
+      "Closed Graph Theorem"
+    ],
+    a: 1
+  },
+  {
+    q: "In ℓ_p spaces, convergence in norm implies:",
+    options: [
+      "Coordinatewise convergence of sequence elements",
+      "Nothing about coordinates",
+      "Divergence of coordinates",
+      "Uniform convergence on index"
+    ],
+    a: 0
+  },
+  {
+    q: "Finite-dimensional normed linear spaces are complete because:",
+    options: [
+      "All norms are equivalent and ℝ^n is complete",
+      "They have inner products",
+      "They are closed subspaces of Lp",
+      "They are countable"
+    ],
+    a: 0
+  },
+  {
+    q: "Which property ensures approximation methods (e.g., iterative) converge within the space?",
+    options: [
+      "Completeness",
+      "Linearity",
+      "Boundedness",
+      "Compactness"
+    ],
+    a: 0
+  },
+  {
+    q: "An example of a non-Banach space would be:",
+    options: [
+      "A normed space that is not complete",
+      "ℓ_p for 1≤p≤∞",
+      "C([a,b]) with sup norm",
+      "Finite-dimensional Euclidean space"
+    ],
+    a: 0
+  },
+  {
+    q: "The supremum norm is also called:",
+    options: [
+      "The L1 norm",
+      "The uniform norm or infinity norm",
+      "The Euclidean norm",
+      "The operator norm"
+    ],
+    a: 1
+  },
+  {
+    q: "Which of the following is TRUE about the continuous dual X*?",
+    options: [
+      "X* contains only unbounded functionals",
+      "X* is a Banach space when X is Banach",
+      "X* = X always",
+      "X* is finite-dimensional"
+    ],
+    a: 1
+  },
+  {
+    q: "Open Mapping Theorem requires:",
+    options: [
+      "T to be injective and linear",
+      "T to be surjective and bounded (between Banach spaces)",
+      "X to be finite-dimensional",
+      "Y to be a subset of X"
+    ],
+    a: 1
+  },
+  {
+    q: "Closed Graph Theorem: If graph(T) is closed in X×Y (both Banach) then:",
+    options: [
+      "T is linear but not bounded",
+      "T is bounded (continuous)",
+      "graph(T) must be compact",
+      "T is surjective"
+    ],
+    a: 1
+  },
+  {
+    q: "Which of the following often serves as standard references for functional analysis (given in PDF)?",
+    options: [
+      "Conway, Kreyszig, Rudin",
+      "Newton, Leibniz, Euclid",
+      "Turing, Church, Gödel",
+      "Feynman, Dirac, Einstein"
+    ],
+    a: 0
+  },
+  {
+    q: "If M is a proper subspace of Banach X, Hahn–Banach allows an f in M* to be:",
+    options: [
+      "Extended to F in X* with same norm",
+      "Restricted to smaller domain only",
+      "Always made compact",
+      "Ignored"
+    ],
+    a: 0
+  }
+]; // total 35
+
+// Basic UI wiring
+const startBtn = document.getElementById('startQuizBtn');
+const quizSection = document.getElementById('quizSection');
+const quizContainer = document.getElementById('quizContainer');
+const submitBtn = document.getElementById('submitQuiz');
+const resetBtn = document.getElementById('resetQuiz');
+const scoreCard = document.getElementById('scoreCard');
+const toggleHints = document.getElementById('toggleHints');
+
+let showHints = false;
+toggleHints.addEventListener('click', () => {
+  showHints = !showHints;
+  toggleHints.innerText = showHints ? 'Hide Hints After Submit' : 'Show Hints After Submit';
+});
+
+startBtn.addEventListener('click', () => {
+  if (quizSection.style.display === 'none' || quizSection.style.display === '') {
+    quizSection.style.display = 'block';
+    startBtn.innerText = 'Quiz Started — 35 Questions';
+    // render only once
+    if (!quizContainer.hasChildNodes()) renderQuiz();
+    // scroll into view for mobile
+    setTimeout(()=> document.getElementById('quizSection').scrollIntoView({behavior:'smooth'}), 120);
+  } else {
+    // toggle visibility
+    quizSection.style.display = 'none';
+    startBtn.innerText = 'Start Quiz — 35 MCQs';
+  }
+});
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+function renderQuiz(){
+  // Build DOM for all questions
+  const frag = document.createDocumentFragment();
+  questions.forEach((item, idx) => {
+    const box = document.createElement('div');
+    box.className = 'question';
+    box.id = `q${idx}`;
+
+    const qt = document.createElement('div');
+    qt.className = 'q-title';
+    qt.innerHTML = `<span style="color:var(--accent)">Q${idx+1}.</span> ${escapeHtml(item.q)}`;
+    box.appendChild(qt);
+
+    const opts = document.createElement('div');
+    opts.className = 'options';
+    item.options.forEach((opt, j) => {
+      const label = document.createElement('label');
+      label.className = 'option';
+      label.tabIndex = 0;
+      label.htmlFor = `q${idx}_opt${j}`;
+
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = `q${idx}`;
+      radio.id = `q${idx}_opt${j}`;
+      radio.value = j;
+      radio.dataset.q = idx;
+
+      const span = document.createElement('span');
+      span.innerHTML = escapeHtml(opt);
+
+      label.appendChild(radio);
+      label.appendChild(span);
+
+      // allow clicking label to focus input
+      label.addEventListener('click', () => {
+        radio.checked = true;
+      });
+
+      opts.appendChild(label);
+    });
+
+    box.appendChild(opts);
+    frag.appendChild(box);
+  });
+
+  quizContainer.appendChild(frag);
+
+  // typeset math if any (call MathJax)
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise().catch(()=>{/* ignore */});
+  }
+}
+
+function gradeQuiz(){
+  let correct = 0;
+  const total = questions.length;
+
+  questions.forEach((item, idx) => {
+    const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+    const box = document.getElementById(`q${idx}`);
+    const options = box.querySelectorAll('.option');
+
+    // clear prior classes
+    options.forEach(op => op.classList.remove('correct','incorrect'));
+
+    if (selected) {
+      const val = Number(selected.value);
+      if (val === item.a) {
+        correct++;
+        // mark chosen option as correct
+        const chosenLabel = box.querySelector(`#q${idx}_opt${val}`).parentElement;
+        chosenLabel.classList.add('correct');
+      } else {
+        // mark chosen wrong and mark correct
+        const chosenLabel = box.querySelector(`#q${idx}_opt${val}`).parentElement;
+        chosenLabel.classList.add('incorrect');
+        const correctLabel = box.querySelector(`#q${idx}_opt${item.a}`).parentElement;
+        correctLabel.classList.add('correct');
+      }
+    } else {
+      // no selection: mark correct option only (if hints enabled, show)
+      const correctLabel = box.querySelector(`#q${idx}_opt${item.a}`).parentElement;
+      if (showHints) correctLabel.classList.add('correct');
+    }
+  });
+
+  // compute percentage
+  const percent = Math.round((correct / total) * 100);
+  scoreCard.style.display = 'block';
+  scoreCard.innerHTML = `Score: ${correct} / ${total} &nbsp;•&nbsp; ${percent}%`;
+
+  // show brief feedback
+  const feedback = document.createElement('div');
+  feedback.style.marginTop = '8px';
+  if (percent === 100) {
+    feedback.innerText = 'Perfect — well done.';
+  } else if (percent >= 80) {
+    feedback.innerText = 'Great job — strong understanding.';
+  } else if (percent >= 50) {
+    feedback.innerText = 'Good — review the incorrect items.';
+  } else {
+    feedback.innerText = 'Consider revisiting the material and trying again.';
+  }
+  scoreCard.appendChild(feedback);
+
+  // disable submit to prevent regrading over same state; allow reset
+  submitBtn.disabled = true;
+  submitBtn.innerText = 'Submitted';
+  // scroll to score
+  scoreCard.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+submitBtn.addEventListener('click', () => {
+  gradeQuiz();
+});
+
+resetBtn.addEventListener('click', () => {
+  // clear radios
+  const checked = quizContainer.querySelectorAll('input[type=radio]');
+  checked.forEach(c => c.checked = false);
+  // clear classes and score
+  const optLabels = quizContainer.querySelectorAll('.option');
+  optLabels.forEach(l => { l.classList.remove('correct','incorrect'); });
+  scoreCard.style.display = 'none';
+  scoreCard.innerHTML = '';
+  submitBtn.disabled = false;
+  submitBtn.innerText = 'Submit';
+  // scroll to top of quiz
+  quizSection.scrollIntoView({behavior:'smooth'});
+});
+
+/* Accessibility: keyboard support for option labels (Enter to toggle) */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const el = document.activeElement;
+    if (el && el.classList && el.classList.contains('option')) {
+      const input = el.querySelector('input[type=radio]');
+      if (input) input.checked = true;
+    }
+  }
+});
+</script>
+
+</body>
+</html>
