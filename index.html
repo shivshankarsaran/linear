@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Banach Spaces — Functional Analysis</title>
+
+  <!-- Source: uploaded PDF -->
+  <!-- :contentReference[oaicite:0]{index=0} -->
+
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- MathJax for LaTeX rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root{
+      --bg:#0c0f2a; --bg-alt:#131735; --text:#e0e0ff; --card:rgba(15,15,35,0.88);
+      --accent:#72c7ff; --ok:#61d18a; --bad:#ff8b8b;
+    }
+    [data-theme="light"]{
+      --bg:#f6f9ff; --bg-alt:#ffffff; --text:#111; --card:#fff; --accent:#3366cc; --ok:#0b8b50; --bad:#cc3b3b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:"Montserrat",system-ui,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Sidebar */
+    nav{
+      position:fixed;left:0;top:0;height:100vh;width:230px;background:var(--bg-alt);padding:26px 12px;border-right:1px solid rgba(255,255,255,0.03);
+    }
+    nav h2{color:var(--accent);text-align:center;margin:6px 0 14px;font-size:1.05rem}
+    nav a{display:block;padding:10px 14px;border-radius:8px;color:var(--text);margin:6px 6px;font-size:0.98rem}
+    nav a:hover{background:rgba(255,255,255,0.03)}
+    #themeToggle{display:block;margin:18px auto 0;padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;width:84%}
+
+    /* Main content */
+    .content{margin-left:250px;padding-bottom:60px}
+    header{position:relative;height:52vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+    canvas.bg{position:absolute;inset:0;width:100%;height:100%;background:linear-gradient(135deg,#0c0f2a,#071020);z-index:1}
+    header h1{position:relative;z-index:3;font-size:2.8rem;margin:0;background:linear-gradient(135deg,#36d1dc,#5b86e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:0.12em;text-transform:uppercase}
+
+    section{max-width:980px;margin:1.75rem auto;padding:1.8rem;border-radius:16px;background:var(--card);box-shadow:0 6px 30px rgba(0,0,60,0.35)}
+    section h2{margin-top:0;color:var(--accent);padding-bottom:6px;border-bottom:2px solid rgba(114,192,255,0.14)}
+    section p, section ul, section ol{line-height:1.6;color:var(--text)}
+    blockquote{border-left:4px solid var(--accent);padding-left:1rem;background:rgba(255,255,255,0.02);margin:1rem 0}
+
+    .subsection{margin-top:1rem;padding-top:1rem;border-top:1px dashed rgba(255,255,255,0.03)}
+    pre{background:#0b1230;color:#dff2ff;padding:10px;border-radius:8px;overflow:auto}
+
+    /* Quiz styles */
+    #quizSection{display:none;margin-top:1.5rem}
+    .quiz-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    .btn{
+      padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:600;
+      background:var(--accent); color:#fff;
+    }
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--text)}
+    .question{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:12px}
+    .q-title{font-weight:600;margin-bottom:6px}
+    .options{display:flex;flex-direction:column;gap:6px}
+    .option{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;cursor:pointer}
+    .option input{flex:0 0 auto}
+    .option.correct{background:rgba(97,209,138,0.12);border:1px solid rgba(97,209,138,0.22)}
+    .option.incorrect{background:rgba(255,139,139,0.09);border:1px solid rgba(255,139,139,0.12)}
+    #scoreCard{padding:12px;border-radius:10px;margin-top:10px;background:rgba(0,0,0,0.18);font-weight:700}
+
+    footer{max-width:980px;margin:2rem auto 4rem auto;color:rgba(255,255,255,0.7);font-size:0.95rem;text-align:center}
+
+    @media (max-width:800px){
+      nav{position:relative;width:100%;height:auto;display:flex;flex-wrap:wrap;gap:6px;padding:12px}
+      .content{margin-left:0}
+      header{height:36vh}
+      header h1{font-size:1.9rem}
+      section{margin:0.9rem 12px;border-radius:12px;padding:1rem}
+      .options{gap:8px}
+    }
+  </style>
+</head>
+<body>
+
+<nav aria-label="Primary navigation">
+  <h2>Shiv Shankar Saran</h2>
+
+  <!-- Condensed sidebar (Option 2) -->
+  <a href="#intro">Introduction</a>
+  <a href="#prelim">Preliminaries</a>
+  <a href="#banach">Banach Spaces</a>
+  <a href="#examples">Examples</a>
+  <a href="#theorems">Major Theorems</a>
+  <a href="#conclusion">Quiz</a>
+
+  <button id="themeToggle" aria-pressed="false">Toggle Theme</button>
+</nav>
+
+<div class="content">
+
+  <header>
+    <canvas class="bg" aria-hidden="true"></canvas>
+    <h1>Banach Spaces</h1>
+  </header>
+
+  <section id="intro">
+    <h2>1. Introduction</h2>
+    <p>
+      Banach spaces are complete normed vector spaces that provide a general framework for functional analysis.
+      Completeness ensures sequences arising from approximation processes converge within the space.
+      Their structure is fundamental for studying bounded linear operators and they are central in areas such as
+      differential equations, optimization, quantum theory, and numerical analysis.
+    </p>
+    <blockquote>
+      Completeness is what makes approximation methods and operator-theoretic tools reliable in infinite-dimensions.
+    </blockquote>
+  </section>
+
+  <section id="prelim">
+    <h2>2. Preliminaries</h2>
+
+    <div class="subsection">
+      <h3>2.1 Normed Vector Spaces</h3>
+      <p>
+        <strong>Definition.</strong> A <em>normed vector space</em> <code>(X, &Vert;&middot;&Vert;)</code> consists of a vector space over
+        <code>ℝ</code> or <code>ℂ</code> together with a function <code>&Vert;&middot;&Vert; : X → [0,∞)</code> satisfying:
+      </p>
+      <ol>
+        <li>&Vert;x&Vert; = 0 iff <code>x = 0</code>.</li>
+        <li>&Vert;αx&Vert; = |α| &Vert;x&Vert; for scalars <code>α</code>.</li>
+        <li>Triangle inequality: &Vert;x + y&Vert; ≤ &Vert;x&Vert; + &Vert;y&Vert;.</li>
+      </ol>
+    </div>
+
+    <div class="subsection">
+      <h3>2.2 Completeness</h3>
+      <p>
+        <strong>Definition.</strong> A sequence <code>(x_n)</code> in a normed space is called Cauchy if for every <code>ε &gt; 0</code>
+        there exists <code>N</code> such that
+      </p>
+      <p style="text-align:center"><code>&Vert;x_n - x_m&Vert; &lt; ε  for all  m,n ≥ N.</code></p>
+      <p>
+        A normed space is <em>complete</em> if every Cauchy sequence converges to some element of the space.
+      </p>
+    </div>
+  </section>
+
+  <section id="banach">
+    <h2>3. Banach Spaces</h2>
+
+    <p>
+      <strong>Definition.</strong> A <em>Banach space</em> is a normed vector space that is complete; every Cauchy sequence
+      converges to an element of the space. Completeness ensures approximation methods yield valid limits and that
+      functional analysis tools remain applicable.
+    </p>
+
+    <div class="subsection">
+      <h3>3.1 Fundamental Properties</h3>
+      <ul>
+        <li>Every closed subspace of a Banach space is a Banach space.</li>
+        <li>The continuous dual <code>X*</code> of any Banach space is itself a Banach space (with the operator norm).</li>
+        <li>Finite-dimensional normed spaces are automatically complete (hence Banach).</li>
+        <li>Products and quotients of Banach spaces preserve completeness under the usual constructions.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="examples">
+    <h2>4. Examples</h2>
+
+    <div class="subsection">
+      <h3>4.1 Sequence Spaces</h3>
+      <p>
+        For <code>1 ≤ p ≤ ∞</code>, the space
+      </p>
+      <p style="text-align:center">
+        <code>ℓ<sub>p</sub> = { x = (x_n) : ∑<sub>n=1</sub><sup>∞</sup> |x_n|⁽ᵖ⁾ &lt; ∞ }</code>
+      </p>
+      <p>
+        equipped with the usual p-norm is a Banach space.
+      </p>
+    </div>
+
+    <div class="subsection">
+      <h3>4.2 Function Spaces</h3>
+      <p>
+        The space <code>C([a,b])</code> of continuous real-valued functions on a closed interval with the sup norm
+        <code>&Vert;f&Vert;<sub>∞</sub> = sup<sub>x∈[a,b]</sub> |f(x)|</code> is a Banach space.
+      </p>
+      <p>
+        The Lebesgue spaces <code>L<sub>p</sub>(Ω)</code> for <code>1 ≤ p ≤ ∞</code> are Banach spaces with respect to the
+        p-norm as well.
+      </p>
+    </div>
+  </section>
+
+  <section id="theorems">
+    <h2>5. Major Theorems</h2>
+
+    <div class="subsection">
+      <h3>5.1 Hahn–Banach Theorem</h3>
+      <p>
+        <strong>Theorem (Hahn–Banach).</strong> Let <code>M</code> be a subspace of a normed space <code>X</code> and let
+        <code>f : M → ℝ</code> be a bounded linear functional. Then there exists an extension
+        <code>F : X → ℝ</code> such that <code>&Vert;F&Vert; = &Vert;f&Vert;</code>.
+      </p>
+    </div>
+
+    <div class="subsection">
+      <h3>5.2 Uniform Boundedness Principle</h3>
+      <p>
+        <strong>Theorem (Banach–Steinhaus).</strong> If a family of bounded linear operators from a Banach space to a
+        normed space is pointwise bounded, then it is uniformly bounded.
+      </p>
+    </div>
+
+    <div class="subsection">
+      <h3>5.3 Open Mapping Theorem</h3>
+      <p>
+        <strong>Theorem.</strong> If <code>T : X → Y</code> is a surjective bounded linear operator between Banach spaces,
+        then <code>T</code> maps open sets in <code>X</code> onto open sets in <code>Y</code>.
+      </p>
+    </div>
+
+    <div class="subsection">
+      <h3>5.4 Closed Graph Theorem</h3>
+      <p>
+        <strong>Theorem.</strong> A linear operator between Banach spaces is bounded if and only if its graph is closed
+        in the product space.
+      </p>
+    </div>
+
+  </section>
+
+  <section id="conclusion">
+    <h2>6. Conclusion</h2>
+    <p>
+      Banach spaces provide a rigorous setting for modern analysis and operator theory. Their completeness, structural
+      properties, and diverse examples make them indispensable in theoretical and applied mathematics.
+    </p>
+
+    <p>
+      <strong>References:</strong><br>
+      Conway — <em>A Course in Functional Analysis</em>;<br>
+      Kreyszig — <em>Introductory Functional Analysis with Applications</em>;<br>
+      Rudin — <em>Functional Analysis</em>.
+    </p>
+
+    <p style="margin-top:1rem">
+      <a href="/mnt/data/linear.pdf" target="_blank" rel="noopener">Open / Download original PDF (source)</a>
+      <!-- file citation marker rendered nearby as required: --> :contentReference[oaicite:1]{index=1}
+    </p>
+
+    <!-- Start Quiz button -->
+    <div style="margin-top:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+      <button id="startQuizBtn" class="btn">Start Quiz — 35 MCQs</button>
+      <button id="toggleHints" class="btn secondary" title="Toggle brief hints after submission">Show Hints After Submit</button>
+    </div>
+
+    <!-- Quiz section (hidden initially) -->
+    <div id="quizSection" aria-live="polite">
+      <div class="quiz-controls" style="margin-top:14px">
+        <div style="font-weight:700">Quiz: 35 multiple-choice questions on Banach spaces</div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button id="submitQuiz" class="btn">Submit</button>
+          <button id="resetQuiz" class="btn secondary">Reset</button>
+        </div>
+      </div>
+
+      <div id="quizContainer" aria-label="Quiz questions"></div>
+
+      <div id="scoreCard" role="status" aria-live="polite" style="display:none"></div>
+    </div>
+
+  </section>
+</div>
+
+<script>
+/* Theme toggle (persists to localStorage) */
+const btn = document.getElementById('themeToggle');
+function applyTheme(t){
+  if(t==='light'){ document.documentElement.dataset.theme='light'; btn.innerText='Switch to Dark'; btn.setAttribute('aria-pressed','true') }
+  else { document.documentElement.dataset.theme='dark'; btn.innerText='Toggle Theme'; btn.setAttribute('aria-pressed','false') }
+}
+const saved = localStorage.getItem('banach_theme')||'dark';
+applyTheme(saved);
+btn.addEventListener('click',()=>{
+  const cur = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  applyTheme(cur);
+  localStorage.setItem('banach_theme', cur);
+});
+
+/* Optimized canvas animation (same as before) */
+(function(){
+  const canvas = document.querySelector('canvas.bg');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const buffer = document.createElement('canvas');
+  const bctx = buffer.getContext('2d');
+
+  let w = innerWidth, h = Math.max(220, innerHeight * 0.52);
+  const DOTS = 46;
+  const dots = [];
+
+  function rand(a,b){return Math.random()*(b-a)+a}
+  class Dot{
+    constructor(){
+      this.x = rand(0,w); this.y = rand(0,h);
+      this.r = rand(0.7,2.2); this.vx = rand(-0.16,0.16); this.vy = rand(-0.16,0.16);
+      this.a = rand(0.32,0.78);
+    }
+    move(){
+      this.x += this.vx; this.y += this.vy;
+      if(this.x<0||this.x>w) this.vx *= -1;
+      if(this.y<0||this.y>h) this.vy *= -1;
+    }
+  }
+
+  function resize(){
+    w = innerWidth; h = Math.max(220, innerHeight * 0.52);
+    canvas.width = w; canvas.height = h;
+    buffer.width = w; buffer.height = h;
+    dots.length = 0;
+    for(let i=0;i<DOTS;i++) dots.push(new Dot());
+  }
+  addEventListener('resize', resize);
+  resize();
+
+  let last = 0;
+  function drawConnections(){
+    let drawn = 0;
+    for(let i=0;i<DOTS;i++){
+      for(let j=i+1;j<DOTS;j++){
+        if(drawn>140) return;
+        const dx = dots[i].x - dots[j].x;
+        const dy = dots[i].y - dots[j].y;
+        const d = Math.hypot(dx,dy);
+        if(d < 120){
+          bctx.beginPath();
+          bctx.strokeStyle = `rgba(140,170,255,${(120-d)/120*0.24})`;
+          bctx.lineWidth = 0.7;
+          bctx.moveTo(dots[i].x,dots[i].y);
+          bctx.lineTo(dots[j].x,dots[j].y);
+          bctx.stroke();
+          drawn++;
+        }
+      }
+    }
+  }
+
+  function frame(ts){
+    if(ts - last < 22){ requestAnimationFrame(frame); return; } // ~45fps cap
+    last = ts;
+
+    bctx.clearRect(0,0,w,h);
+    dots.forEach(d=>{
+      d.move();
+      bctx.beginPath();
+      bctx.fillStyle = `rgba(138,180,255,${d.a})`;
+      bctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      bctx.fill();
+    });
+    drawConnections();
+
+    ctx.clearRect(0,0,w,h);
+    ctx.drawImage(buffer,0,0);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* Smooth highlight of active sidebar link (intersection observer) */
+(function(){
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('nav a');
+  const map = {};
+  links.forEach(a=> map[a.getAttribute('href').slice(1)] = a);
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        links.forEach(l=> l.style.opacity = '0.6');
+        const id = en.target.id;
+        const active = map[id];
+        if(active){ active.style.opacity = '1'; active.style.background = 'rgba(255,255,255,0.03)'; setTimeout(()=>active.style.background='transparent',400) }
+      }
+    });
+  },{root:null,threshold:0.45});
+  sections.forEach(s=> io.observe(s));
+})();
+
+/* ------------------ Quiz: 35 MCQs generated from PDF content ------------------ */
+
+const questions = [
+  {
+    q: "Which of the following best describes a Banach space?",
+    options: [
+      "A vector space with an inner product",
+      "A normed vector space that is complete",
+      "A finite-dimensional normed space only",
+      "A metric space without norm"
+    ],
+    a: 1
+  },
+  {
+    q: "A norm satisfies which of the following properties?",
+    options: [
+      "∥x+y∥ = ∥x∥ + ∥y∥ for all x,y",
+      "∥αx∥ = ∥x∥ for all scalars α",
+      "∥x∥ = 0 iff x = 0",
+      "∥x∥ ≥ 0 but can be negative"
+    ],
+    a: 2
+  },
+  {
+    q: "A sequence (x_n) is Cauchy in a normed space if:",
+    options: [
+      "x_n converges to 0",
+      "There exists N such that for m,n ≥ N, ∥x_n - x_m∥ is small",
+      "Each x_n has bounded norm",
+      "The series ∑ x_n converges"
+    ],
+    a: 1
+  },
+  {
+    q: "Which of these spaces is a Banach space with the sup norm?",
+    options: [
+      "C([a,b]) — continuous functions on [a,b]",
+      "The space of polynomials on [a,b]",
+      "The space of differentiable functions with L1 norm",
+      "Finite sequences with Euclidean norm"
+    ],
+    a: 0
+  },
+  {
+    q: "For 1 ≤ p ≤ ∞, ℓ_p is:",
+    options: [
+      "Not complete for p > 2",
+      "A Banach space (complete) with the p-norm",
+      "Only finite sequences",
+      "A space of continuous functions"
+    ],
+    a: 1
+  },
+  {
+    q: "Which statement is true about closed subspaces of a Banach space?",
+    options: [
+      "They are always finite-dimensional",
+      "They need not be complete",
+      "They are themselves Banach spaces",
+      "They are dense in the whole space"
+    ],
+    a: 2
+  },
+  {
+    q: "The dual space X* of a Banach space X (with operator norm) is:",
+    options: [
+      "Not necessarily a vector space",
+      "Always a Banach space",
+      "Only defined for finite-dimensional X",
+      "Isomorphic to X always"
+    ],
+    a: 1
+  },
+  {
+    q: "Which theorem states: 'A surjective bounded linear operator between Banach spaces maps open sets to open sets'?",
+    options: [
+      "Closed Graph Theorem",
+      "Uniform Boundedness Principle",
+      "Open Mapping Theorem",
+      "Hahn–Banach Theorem"
+    ],
+    a: 2
+  },
+  {
+    q: "Hahn–Banach theorem concerns:",
+    options: [
+      "Extension of bounded linear functionals",
+      "Convergence of sequences",
+      "Compactness of operators",
+      "Orthogonality in inner product spaces"
+    ],
+    a: 0
+  },
+  {
+    q: "Uniform Boundedness Principle (Banach–Steinhaus) asserts:",
+    options: [
+      "Pointwise bounded family of bounded linear operators is uniformly bounded",
+      "Every bounded operator is compact",
+      "Every Cauchy sequence is convergent",
+      "Every linear functional is continuous"
+    ],
+    a: 0
+  },
+  {
+    q: "Closed Graph Theorem provides a criterion for:",
+    options: [
+      "An operator to be compact",
+      "An operator to be bounded (continuous)",
+      "A space to be complete",
+      "A sequence to be Cauchy"
+    ],
+    a: 1
+  },
+  {
+    q: "Which of the following is automatically complete?",
+    options: [
+      "An infinite-dimensional normed space",
+      "A finite-dimensional normed space",
+      "A subspace of Lp that is not closed",
+      "A countable union of closed sets"
+    ],
+    a: 1
+  },
+  {
+    q: "If X is Banach and M is a closed subspace, then X/M (the quotient) is:",
+    options: [
+      "Not normable",
+      "Also Banach under the quotient norm",
+      "Finite-dimensional",
+      "Isomorphic to M"
+    ],
+    a: 1
+  },
+  {
+    q: "In C([a,b]), the sup norm of f is defined as:",
+    options: [
+      "∥f∥_∞ = ∫_a^b |f(x)| dx",
+      "∥f∥_∞ = sup_{x∈[a,b]} |f(x)|",
+      "∥f∥_∞ = max f(x)",
+      "None of the above"
+    ],
+    a: 1
+  },
+  {
+    q: "Which space uses the p-norm defined via integral for functions?",
+    options: [
+      "ℓ_p",
+      "C([a,b])",
+      "L_p(Ω)",
+      "Finite-dimensional Euclidean space"
+    ],
+    a: 2
+  },
+  {
+    q: "A continuous linear functional on a subspace M can be extended to whole space with same norm — this is:",
+    options: [
+      "Open Mapping Theorem",
+      "Hahn–Banach Theorem",
+      "Closed Graph Theorem",
+      "Heine–Borel Theorem"
+    ],
+    a: 1
+  },
+  {
+    q: "If a sequence is Cauchy and the space is complete, then:",
+    options: [
+      "It converges to an element inside the space",
+      "It diverges",
+      "It has a subsequence that converges outside the space",
+      "Nothing guaranteed"
+    ],
+    a: 0
+  },
+  {
+    q: "Which of the following is NOT necessarily true in an arbitrary normed space?",
+    options: [
+      "Every Cauchy sequence converges",
+      "The norm satisfies triangle inequality",
+      "Scalar multiplication scales norm",
+      "Only zero has zero norm"
+    ],
+    a: 0
+  },
+  {
+    q: "Products of Banach spaces (with product norm) are:",
+    options: [
+      "Never Banach",
+      "Banach spaces under standard norms",
+      "Finite only",
+      "Not normable"
+    ],
+    a: 1
+  },
+  {
+    q: "The operator norm of a bounded linear functional f is:",
+    options: [
+      "inf { C : |f(x)| ≤ C ∥x∥ for all x }",
+      "sup { |f(x)| : ∥x∥ = 1 }",
+      "Both (a) and (b) (they coincide)",
+      "None of the above"
+    ],
+    a: 2
+  },
+  {
+    q: "Which of these is an example of a Banach space?",
+    options: [
+      "Polynomials with coefficientwise topology",
+      "ℓ_2 with the usual 2-norm",
+      "Space of rational functions without sup norm",
+      "Space of all sequences without any norm"
+    ],
+    a: 1
+  },
+  {
+    q: "If T: X → Y is a linear operator between Banach spaces and its graph is closed, then:",
+    options: [
+      "T is not defined",
+      "T is bounded (continuous)",
+      "T is compact",
+      "T is surjective"
+    ],
+    a: 1
+  },
+  {
+    q: "Which theorem is most directly used to show pointwise bounded linear maps are uniformly bounded?",
+    options: [
+      "Open Mapping Theorem",
+      "Banach–Steinhaus (Uniform Boundedness)",
+      "Hahn–Banach",
+      "Closed Graph Theorem"
+    ],
+    a: 1
+  },
+  {
+    q: "In ℓ_p spaces, convergence in norm implies:",
+    options: [
+      "Coordinatewise convergence of sequence elements",
+      "Nothing about coordinates",
+      "Divergence of coordinates",
+      "Uniform convergence on index"
+    ],
+    a: 0
+  },
+  {
+    q: "Finite-dimensional normed linear spaces are complete because:",
+    options: [
+      "All norms are equivalent and ℝ^n is complete",
+      "They have inner products",
+      "They are closed subspaces of Lp",
+      "They are countable"
+    ],
+    a: 0
+  },
+  {
+    q: "Which property ensures approximation methods (e.g., iterative) converge within the space?",
+    options: [
+      "Completeness",
+      "Linearity",
+      "Boundedness",
+      "Compactness"
+    ],
+    a: 0
+  },
+  {
+    q: "An example of a non-Banach space would be:",
+    options: [
+      "A normed space that is not complete",
+      "ℓ_p for 1≤p≤∞",
+      "C([a,b]) with sup norm",
+      "Finite-dimensional Euclidean space"
+    ],
+    a: 0
+  },
+  {
+    q: "The supremum norm is also called:",
+    options: [
+      "The L1 norm",
+      "The uniform norm or infinity norm",
+      "The Euclidean norm",
+      "The operator norm"
+    ],
+    a: 1
+  },
+  {
+    q: "Which of the following is TRUE about the continuous dual X*?",
+    options: [
+      "X* contains only unbounded functionals",
+      "X* is a Banach space when X is Banach",
+      "X* = X always",
+      "X* is finite-dimensional"
+    ],
+    a: 1
+  },
+  {
+    q: "Open Mapping Theorem requires:",
+    options: [
+      "T to be injective and linear",
+      "T to be surjective and bounded (between Banach spaces)",
+      "X to be finite-dimensional",
+      "Y to be a subset of X"
+    ],
+    a: 1
+  },
+  {
+    q: "Closed Graph Theorem: If graph(T) is closed in X×Y (both Banach) then:",
+    options: [
+      "T is linear but not bounded",
+      "T is bounded (continuous)",
+      "graph(T) must be compact",
+      "T is surjective"
+    ],
+    a: 1
+  },
+  {
+    q: "Which of the following often serves as standard references for functional analysis (given in PDF)?",
+    options: [
+      "Conway, Kreyszig, Rudin",
+      "Newton, Leibniz, Euclid",
+      "Turing, Church, Gödel",
+      "Feynman, Dirac, Einstein"
+    ],
+    a: 0
+  },
+  {
+    q: "If M is a proper subspace of Banach X, Hahn–Banach allows an f in M* to be:",
+    options: [
+      "Extended to F in X* with same norm",
+      "Restricted to smaller domain only",
+      "Always made compact",
+      "Ignored"
+    ],
+    a: 0
+  }{
+  q: "In a Banach space, every absolutely convergent series:",
+  options: [
+    "Converges unconditionally",
+    "Diverges unless terms are positive",
+    "Must be orthogonal",
+    "Has no relation to conditional convergence"
+  ],
+  a: 0
+},
+{
+  q: "Which statement about L∞(Ω) is correct?",
+  options: [
+    "It is not complete under the essential sup norm",
+    "It becomes a Banach space under the essential supremum norm",
+    "It is finite-dimensional for finite measure Ω",
+    "It consists only of continuous functions"
+  ],
+  a: 1
+}
+
+]; // total 35
+
+// Basic UI wiring
+const startBtn = document.getElementById('startQuizBtn');
+const quizSection = document.getElementById('quizSection');
+const quizContainer = document.getElementById('quizContainer');
+const submitBtn = document.getElementById('submitQuiz');
+const resetBtn = document.getElementById('resetQuiz');
+const scoreCard = document.getElementById('scoreCard');
+const toggleHints = document.getElementById('toggleHints');
+
+let showHints = false;
+toggleHints.addEventListener('click', () => {
+  showHints = !showHints;
+  toggleHints.innerText = showHints ? 'Hide Hints After Submit' : 'Show Hints After Submit';
+});
+
+startBtn.addEventListener('click', () => {
+  if (quizSection.style.display === 'none' || quizSection.style.display === '') {
+    quizSection.style.display = 'block';
+    startBtn.innerText = 'Quiz Started — 35 Questions';
+    // render only once
+    if (!quizContainer.hasChildNodes()) renderQuiz();
+    // scroll into view for mobile
+    setTimeout(()=> document.getElementById('quizSection').scrollIntoView({behavior:'smooth'}), 120);
+  } else {
+    // toggle visibility
+    quizSection.style.display = 'none';
+    startBtn.innerText = 'Start Quiz — 35 MCQs';
+  }
+});
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+function renderQuiz(){
+  // Build DOM for all questions
+  const frag = document.createDocumentFragment();
+  questions.forEach((item, idx) => {
+    const box = document.createElement('div');
+    box.className = 'question';
+    box.id = `q${idx}`;
+
+    const qt = document.createElement('div');
+    qt.className = 'q-title';
+    qt.innerHTML = `<span style="color:var(--accent)">Q${idx+1}.</span> ${escapeHtml(item.q)}`;
+    box.appendChild(qt);
+
+    const opts = document.createElement('div');
+    opts.className = 'options';
+    item.options.forEach((opt, j) => {
+      const label = document.createElement('label');
+      label.className = 'option';
+      label.tabIndex = 0;
+      label.htmlFor = `q${idx}_opt${j}`;
+
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = `q${idx}`;
+      radio.id = `q${idx}_opt${j}`;
+      radio.value = j;
+      radio.dataset.q = idx;
+
+      const span = document.createElement('span');
+      span.innerHTML = escapeHtml(opt);
+
+      label.appendChild(radio);
+      label.appendChild(span);
+
+      // allow clicking label to focus input
+      label.addEventListener('click', () => {
+        radio.checked = true;
+      });
+
+      opts.appendChild(label);
+    });
+
+    box.appendChild(opts);
+    frag.appendChild(box);
+  });
+
+  quizContainer.appendChild(frag);
+
+  // typeset math if any (call MathJax)
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise().catch(()=>{/* ignore */});
+  }
+}
+
+function gradeQuiz(){
+  let correct = 0;
+  const total = questions.length;
+
+  questions.forEach((item, idx) => {
+    const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+    const box = document.getElementById(`q${idx}`);
+    const options = box.querySelectorAll('.option');
+
+    // clear prior classes
+    options.forEach(op => op.classList.remove('correct','incorrect'));
+
+    if (selected) {
+      const val = Number(selected.value);
+      if (val === item.a) {
+        correct++;
+        // mark chosen option as correct
+        const chosenLabel = box.querySelector(`#q${idx}_opt${val}`).parentElement;
+        chosenLabel.classList.add('correct');
+      } else {
+        // mark chosen wrong and mark correct
+        const chosenLabel = box.querySelector(`#q${idx}_opt${val}`).parentElement;
+        chosenLabel.classList.add('incorrect');
+        const correctLabel = box.querySelector(`#q${idx}_opt${item.a}`).parentElement;
+        correctLabel.classList.add('correct');
+      }
+    } else {
+      // no selection: mark correct option only (if hints enabled, show)
+      const correctLabel = box.querySelector(`#q${idx}_opt${item.a}`).parentElement;
+      if (showHints) correctLabel.classList.add('correct');
+    }
+  });
+
+  // compute percentage
+  const percent = Math.round((correct / total) * 100);
+  scoreCard.style.display = 'block';
+  scoreCard.innerHTML = `Score: ${correct} / ${total} &nbsp;•&nbsp; ${percent}%`;
+
+  // show brief feedback
+  const feedback = document.createElement('div');
+  feedback.style.marginTop = '8px';
+  if (percent === 100) {
+    feedback.innerText = 'Perfect — well done.';
+  } else if (percent >= 80) {
+    feedback.innerText = 'Great job — strong understanding.';
+  } else if (percent >= 50) {
+    feedback.innerText = 'Good — review the incorrect items.';
+  } else {
+    feedback.innerText = 'Consider revisiting the material and trying again.';
+  }
+  scoreCard.appendChild(feedback);
+
+  // disable submit to prevent regrading over same state; allow reset
+  submitBtn.disabled = true;
+  submitBtn.innerText = 'Submitted';
+  // scroll to score
+  scoreCard.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+submitBtn.addEventListener('click', () => {
+  gradeQuiz();
+});
+
+resetBtn.addEventListener('click', () => {
+  // clear radios
+  const checked = quizContainer.querySelectorAll('input[type=radio]');
+  checked.forEach(c => c.checked = false);
+  // clear classes and score
+  const optLabels = quizContainer.querySelectorAll('.option');
+  optLabels.forEach(l => { l.classList.remove('correct','incorrect'); });
+  scoreCard.style.display = 'none';
+  scoreCard.innerHTML = '';
+  submitBtn.disabled = false;
+  submitBtn.innerText = 'Submit';
+  // scroll to top of quiz
+  quizSection.scrollIntoView({behavior:'smooth'});
+});
+
+/* Accessibility: keyboard support for option labels (Enter to toggle) */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const el = document.activeElement;
+    if (el && el.classList && el.classList.contains('option')) {
+      const input = el.querySelector('input[type=radio]');
+      if (input) input.checked = true;
+    }
+  }
+});
+</script>
+
+</body>
+</html>
